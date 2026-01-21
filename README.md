@@ -1,95 +1,215 @@
-Ultimate Cost-Optimized Production-Like AWS Lab
-Objective
+Project Title
 
-Build a production-like multi-tier web application on AWS using only Free Tier resources. Demonstrate secure architecture, auto-scaling, monitoring, alerting, and cost governance without incurring any charges.
+Production-Like Multi-Tier Web App on AWS (Free Tier)
 
-Architecture Overview
+🧠 Project Summary
 
-ALB (Application Load Balancer) — public endpoint
+This project simulates a real production environment using AWS only within Free Tier limits, without CLI or Terraform.
+It includes load balancing, auto-scaling, monitoring, alerting, and cost governance, delivering enterprise-grade architecture without generating real cost.
 
-Auto Scaling Group (ASG) — maintains 1–2 t3.micro EC2 instances
+🏗️ Architecture Overview
+🔹 Key Components
+Layer	Service	Purpose
+Web Tier	EC2 (t3.micro)	Hosts web app
+Load Balancing	ALB	Distributes traffic
+Scaling	Auto Scaling Group	Auto-healing & scaling
+Monitoring	CloudWatch	Metrics, dashboard, alarms
+Alerts	SNS	Notifications
+Cost Control	AWS Budget	Prevents billing surprises
+🧩 Architecture Diagram (Text)
+Internet
+   |
+  ALB (public)
+   |
+Target Group (Web-TG)
+   |
+Auto Scaling Group
+   |
+EC2 Instances (private)
+   |
+(connected to RDS - reused existing free tier)
 
-EC2 Instances (Web Tier) — private, only reachable through ALB
+✅ What Makes This “Ultimate”?
+1. Production-grade Security
 
-RDS (Database Tier) — reused Free Tier PostgreSQL instance
+EC2 is private
 
-Security Groups
+ALB is public
 
-Web tier only allows traffic from ALB
+No inbound 0.0.0.0/0 to EC2
 
-DB only allows traffic from web tier
+Proper Security Groups & separation
 
-Features Implemented
-✅ Auto Scaling & Resilience
+2. Auto-healing & Scaling
 
-ASG maintains minimum 1 instance
+ASG maintains min 1 instance
 
-Max 2 instances (Free Tier limit)
+Auto replaces failed instance
 
-CPU target tracking policy at 50%
+Scales up to 2 instances only (Free Tier safe)
 
-Auto-healing: replaces failed instances automatically
+3. Monitoring & Alerting
 
-Health checks ensure only healthy instances serve traffic
+CloudWatch Dashboard
 
-✅ Monitoring & Alerts
+ALB Unhealthy Host Alarm
 
-CloudWatch Dashboard:
+ASG Instance Loss Alarm
 
-EC2 CPUUtilization
+SNS notifications
 
-ALB RequestCount
+4. Cost Governance
 
-ALB UnHealthyHostCount
+$1 monthly budget
 
-CloudWatch Alarms:
+Alerts at 80% & 100%
 
-ALB-UnHealthy-Targets
+🔧 Full Feature List (Completed)
+✔️ Infrastructure
 
-ASG-Instance-Loss
+ALB created and configured
 
-SNS notifications configured (optional)
+Auto Scaling Group created
 
-✅ Cost Governance
+Launch Template configured
 
-AWS Budget: $1/month
+EC2 with Apache + PHP bootstrapped
 
-Alerts at 80% and 100%
+Web tier isolated in private subnet
 
-Ensures zero unexpected charges
+✔️ Monitoring
 
-Security Best Practices
+CloudWatch Dashboard created
 
-ALB is public; EC2 instances are private
+CPU Utilization widget
 
-RDS not publicly accessible
+Request Count widget
 
-Security groups follow principle of least privilege
+UnHealthy Host Count widget
 
-No direct SSH access (SSM recommended if needed)
+✔️ Alarms
 
-Deployment Details
+UnHealthy Targets Alarm
 
-AMI: Amazon Linux 2023 (Free Tier)
+ASG Instance Loss Alarm
+
+✔️ Auto Scaling Policy
+
+CPU target tracking at 50%
+
+Warm-up 300s
+
+Scale-in enabled
+
+✔️ Cost Control
+
+Budget set to $1/month
+
+Alerts set to 80% and 100%
+
+🧾 Installation & Deployment (Click-by-Click)
+Step 1 — Launch Template
+
+Go to EC2 Console
+
+Click Launch Templates
+
+Click Create launch template
+
+Name: webserver-prod-template
+
+AMI: Amazon Linux 2023
 
 Instance type: t3.micro
 
-Web server: Apache + PHP
+Add webserver-sg
 
-DB: PostgreSQL (Free Tier)
+Add User data script (Apache + PHP)
 
-How to Validate
+Save
 
-Open the ALB DNS name in a browser → web app loads
+Step 2 — Auto Scaling Group
 
-Terminate the EC2 instance → ASG launches a replacement
+Go to Auto Scaling Groups
 
-CloudWatch dashboard shows metrics
+Click Create Auto Scaling Group
 
-Alarms trigger if health degrades or ASG drops to 0 instances
+Choose webserver-prod-template
 
-AWS budget alerts if costs exceed threshold
+Select all AZs
 
-Outcome
+Set:
 
-A fully production-like, resilient AWS web application built only within Free Tier limits, with complete monitoring, scaling, and cost controls.
+Min: 1
+
+Desired: 1
+
+Max: 2
+
+Health check: EC2
+
+Create
+
+Step 3 — ALB & Target Group
+
+Go to Load Balancers
+
+Click Create ALB
+
+Configure listener HTTP 80
+
+Create target group: Web-TG
+
+Attach ASG to target group
+
+Step 4 — CloudWatch Dashboard
+
+CloudWatch → Dashboards → Create
+
+Add widgets:
+
+CPUUtilization
+
+RequestCount
+
+UnHealthyHostCount
+
+Step 5 — CloudWatch Alarms
+
+CloudWatch → Alarms → Create
+
+Create UnHealthyHostCount alarm
+
+Create GroupInServiceInstances < 1 alarm
+
+Connect to SNS
+
+Step 6 — Auto Scaling Policy
+
+Auto Scaling → Scaling policies
+
+Add Target Tracking Policy
+
+Metric: CPU
+
+Target: 50%
+
+Step 7 — Budget
+
+AWS Budgets → Create Budget
+
+Monthly Cost Budget: $1
+
+Alerts: 80% & 100%
+
+Output & Value
+
+This project proves the ability to build production-grade cloud infrastructure while:
+
+Staying within Free Tier limits
+
+Using AWS Console only
+
+Applying real enterprise standards
+
+Demonstrating monitoring, security, and cost control
